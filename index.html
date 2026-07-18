@@ -271,7 +271,8 @@
 
       <div class="form-group">
         <label for="entry.211933097">郵便番号<span class="required">*</span></label>
-        <input name="entry.211933097" type="text" required id="entry.211933097">
+        <input name="entry.211933097" type="text" required id="entry.211933097" inputmode="numeric">
+        <p class="description">半角数字のみ、ハイフンなしでご入力ください（例：1000001）。</p>
       </div>
 
       <div class="form-group">
@@ -355,19 +356,19 @@
       </div>
 
       <div class="form-group">
-        <label>昼（時間・曜日指定不可）10:00~17:00講義参加<span class="required">*</span></label>
+        <label>昼（時間・曜日指定不可）11:00~14:00講義参加<span class="required">*</span></label>
         <div class="radio-group">
-          <label><input type="radio" name="entry.477376221" value="11時〜" required> 11時〜</label>
-          <label><input type="radio" name="entry.477376221" value="12時〜"> 12時〜</label>
+          <label><input type="radio" name="entry.477376221" value="可能" required> 可能</label>
+          <label><input type="radio" name="entry.477376221" value="不可"> 不可</label>
         </div>
         <p class="description">講義に参加可能な時間帯についてご記入ください（完全に不可能な場合以外はご対応をお願いいたします。尚、講義時間については確約するものではございませんのでご了承いただけますと幸いです。）</p>
       </div>
 
       <div class="form-group">
-        <label>夜（時間・曜日指定不可）18:00~22:00講義参加<span class="required">*</span></label>
+        <label>夜（時間・曜日指定不可）21:00~24:00講義参加<span class="required">*</span></label>
         <div class="radio-group">
-          <label><input type="radio" name="entry.849335567" value="21時〜" required> 21時〜</label>
-          <label><input type="radio" name="entry.849335567" value="22時〜"> 22時〜</label>
+          <label><input type="radio" name="entry.849335567" value="可能" required> 可能</label>
+          <label><input type="radio" name="entry.849335567" value="不可"> 不可</label>
         </div>
         <p class="description">講義に参加可能な時間帯についてご記入ください（完全に不可能な場合以外はご対応をお願いいたします。尚、講義時間については確約するものではございませんのでご了承いただけますと幸いです。）</p>
       </div>
@@ -501,7 +502,20 @@
 
         let lastLookedUp = '';
 
+        // 全角数字が入力されても画面上に反映されないよう、その場で除去する
+        function stripFullWidthDigits() {
+          const cursor = zipInput.selectionStart;
+          const before = zipInput.value;
+          const after = before.replace(/[０-９]/g, '');
+          if (before !== after) {
+            const removedBeforeCursor = before.slice(0, cursor).replace(/[０-９]/g, '').length;
+            zipInput.value = after;
+            zipInput.setSelectionRange(removedBeforeCursor, removedBeforeCursor);
+          }
+        }
+
         async function lookupZip() {
+          stripFullWidthDigits();
           const digits = zipInput.value.replace(/[^0-9]/g, '');
           if (digits.length !== 7 || digits === lastLookedUp) return;
           lastLookedUp = digits;
